@@ -3,6 +3,9 @@ body {
     height: 100%;
 }
 
+.auth-form {
+    padding-top: 100px;
+}
 .wrap {
     min-height: 100%;
     height: auto;
@@ -112,4 +115,8 @@ a.desc:after {
 
 .nav > li > form > button.logout:focus {
     outline: none;
+}
+
+.default-top {
+    margin-top: 30px;
 }
