@@ -68,6 +68,14 @@ class AdminController extends Controller
             $kol_new_clients = 0;
 
             if (Yii::$app->request->post('uid')) {
+                $uid = Yii::$app->request->post('uid');
+                Yii::$app->db->createCommand()->insert('log_ml', [
+                    'id_ml' => Yii::$app->request->post('uid'),
+                    'data_ml' => date('Y-M-D'),
+                    'status_ml' => 'process',
+                    'autor_ml' => Yii::$app->user->id
+                ])->execute();
+
                 session_start();
                 $_SESSION['process'] = 'получение почты';
                 session_write_close();
@@ -237,6 +245,14 @@ class AdminController extends Controller
                 } else {
                     echo $kol_new_clients;
                 }
+                Yii::$app->db->createCommand()->update('log_ml',
+                    [
+                        'status_ml' => 'created',
+                        'data_ml' => date('Y-M-D'),
+                        'autor_ml' => Yii::$app->user->id
+                    ],
+                    'id_ml = ' . Yii::$app->request->post('uid')
+            )->execute();
                 unset($create_ml);
                 unset($new_client);
                 unset($find_ml);
@@ -294,5 +310,86 @@ class AdminController extends Controller
         Yii::$app->authManager->assign($userRole, Yii::$app->user->getId());
     }
 */
+
+public function actionDriver()
+{
+    $driver = array();
+    $i = 0;
+    $path_csv = Yii::getAlias('@attach_csv');
+    $dir = new \DirectoryIterator($path_csv);
+    foreach ($dir as $fileinfo) {
+        if ( $fileinfo->isFile()) {
+            //echo $fileinfo->getPathname() . '<br>';
+            $csv_file = new \SplFileObject($fileinfo->getPathname());
+            while (!$csv_file->eof()) {
+                $stroka = $csv_file->fgetcsv();
+                $csv[] = array_diff($stroka, array('', ' ', '  '));
+            }
+
+            //var_dump($csv); exit;
+
+            $dr_name = explode('  ', trim($csv[3][0]));;
+            $driver_name = $dr_name[1]; // ФИО водителя
+            $num_avto = explode(' ', trim($csv[2][0]));;
+            $number_avto = $num_avto[1]; // номер авто водителя
+
+            $ph= explode(' ', trim($csv[3][4]));;
+            $phone= $ph[4]; // ФИО водителя
+
+            if (empty($driver)) {
+                $driver[$i]['voditel_name'] = $driver_name;
+                $driver[$i]['voditel_nomer_auto'] = $number_avto;
+                $driver[$i]['voditel_phone'] = $phone;
+            }
+
+            $there_is_match = false;
+            foreach ($driver as $item) {
+                if ($item['voditel_name'] == $driver_name) {
+                    $there_is_match = true;
+                    break;
+                }
+            }
+
+            if ($there_is_match == false) {
+                $driver[$i]['voditel_name'] = $driver_name;
+                $driver[$i]['voditel_nomer_auto'] = $number_avto;
+                if (empty($phone)) {
+                    $phone = 'не определен';
+                }
+                $driver[$i]['voditel_phone'] = $phone;
+
+            }
+
+            $csv = null;
+            $i++;
+        }
+    }
+
+    //var_dump($driver); exit;
+
+
+    foreach ($driver as $item) {
+        $model = new Voditel();
+        $model->voditel_name = $item['voditel_name'];
+        $model->voditel_nomer_auto = $item['voditel_nomer_auto'];
+        $model->voditel_phone = $item['voditel_phone'];
+        $model->save();
+        echo 'записан водитель ' . $item['driver'] . '<br>';
+    }
+
+
+/*
+    // читаем csv файл и создаем массив данных для БД
+    while (!$file->eof()) {
+        $data = $file->fgetcsv();
+        $data = array_diff($data, array('', ' ', '  '));
+        $arr[] = $data;
+        if ( strripos($data[0], 'Итоговая стоимость доставляемого товара')   !== FALSE ) {
+            break;
+        }
+    }
+*/
+
+}
 
 }
