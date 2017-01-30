@@ -119,4 +119,10 @@ a.desc:after {
 
 .default-top {
     margin-top: 30px;
+
+}
+
+.grid-column {
+    margin-top: 50px;
+    color: #aa0000;
 }

@@ -311,7 +311,7 @@ class AdminController extends Controller
     }
 */
 
-public function actionDriver()
+    public function actionDriver()
 {
     $driver = array();
     $i = 0;
@@ -391,5 +391,10 @@ public function actionDriver()
 */
 
 }
+
+    public function actionAdmin()
+    {
+        return $this->render('admin');
+    }
 
 }
