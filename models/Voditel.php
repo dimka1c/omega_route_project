@@ -24,7 +24,8 @@ class Voditel extends ActiveRecord
         return [
             [['voditel_name', 'voditel_nomer_auto'], 'required'],
             [['voditel_name', 'voditel_nomer_auto'], 'trim'],
-            ['voditel_phone', 'trim']
+            ['voditel_phone', 'trim'],
+            //['active', 'boolean']
         ];
     }
 

@@ -42,17 +42,19 @@ $script = <<< JS
             cache: false,
             data: 'id='+id,
             success: function(data){
-                console.log('вернулись данные - ' + data);
+                //console.log('вернулись данные - ' + data);
+                $('#driver_status_'+id).removeClass('label-success label-danger');
+                $('#driver_status_'+id).addClass('label-warning');
                 $('#driver_status_'+id).html(data);
             },
             beforeSend: function (id) {
-                console.log('перед отправкой на сервер ' + id);
+                //console.log('перед отправкой на сервер ' + id);
             },
             complete: function() {
-                console.log('запрос завершен');
+                //console.log('запрос завершен');
             },
             error: function (data) {
-                console.log('произошла ошибка в запросе');
+                //console.log('произошла ошибка в запросе');
             },
     
         });
@@ -70,7 +72,7 @@ $this->registerJs($script, yii\web\View::POS_END);
         <div class="col-md-2">
 
             <div class="list-group">
-                <a href="#" class="list-group-item">Список водителей</a>
+                <a href="/web/admin/admin" class="list-group-item">Список водителей</a>
                 <a href="/web/driver/add-driver" class="list-group-item">Добавить водителя</a>
                 <a href="#" class="list-group-item">Пользователи</a>
             </div>

@@ -8,13 +8,12 @@
 
 namespace app\controllers;
 
-
 use app\models\CreateML;
 use app\models\Voditel;
 use Yii;
-use yii\base\Controller;
+use yii\web\Controller;
 
-class DriverController extends \yii\base\Controller
+class DriverController extends Controller
 {
 
     public function actionChangeStatus()
@@ -40,12 +39,14 @@ class DriverController extends \yii\base\Controller
     public function actionDeleteDriver()
     {
         if( Yii::$app->request->isAjax) {
-            if (isset($_POST['id'])) {
-                $model = CreateML::findAll(['driver' => $_POST['id']]);
-                if (!empty($model)) {
+            if (Yii::$app->request->post('id')) {
+                $id = Yii::$app->request->post('id');
+                $model = CreateML::find()->where(['driver' => $id])->count();
+                if ($model > 0) {
                     echo 'невозможно удалить';
                 } else {
-
+                    Voditel::deleteAll(['id' => $id]);
+                    echo 'удален';
                 }
             }
         }
@@ -53,9 +54,21 @@ class DriverController extends \yii\base\Controller
 
     public function actionAddDriver()
     {
-       $model = new Voditel();
-        $this->layout = 'admin';
-        return $this->render('add_driver', compact('model'));
+       if (Yii::$app->user->can('admin')) {
+           $this->layout = 'admin';
+           $model = new Voditel();
+           if ($model->load(Yii::$app->request->post())) {
+               if ( $model->validate() ) {
+                   if($model->save()) {
+                       Yii::$app->session->setFlash('driver_add', 'В базу данных добавлен новый водитель', true );
+                       return $this->refresh();
+                   };
+               }
+           }
 
+           return $this->render('add_driver', compact('model'));
+
+       }
     }
+
 }
