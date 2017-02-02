@@ -71,4 +71,61 @@ class DriverController extends Controller
        }
     }
 
+    public function actionViewDriver()
+    {
+        if (Yii::$app->user->can('admin')) {
+            $this->layout = 'admin';
+            if ($id = Yii::$app->request->get('id')) {
+                if ($save = Yii::$app->request->get('save')) {  //производим запись в базу
+                    $model = new Voditel();
+                    if ($model->load(Yii::$app->request->post())) {
+                        if ($model->validate()) {
+                            Yii::$app->session->setFlash('change_driver', 'Данные изменены', true);
+                            return $this->refresh();
+                        }
+                    }
+
+                        if ($model::updateAll(
+                            [
+                                'voditel_name' => '35_name',
+                                'voditel_nomer_auto' => '35_number_auto',
+                                'voditel_phone' => '35_phone'
+                            ],
+                            ['id' => 35]
+                        ))
+                        {
+                            Yii::$app->session->setFlash('change_driver', 'Данные изменены', true);
+                            //return $this->render('view_driver', compact('model'));
+                            return $this->refresh();
+                        };
+
+
+                    }
+                }
+                $model = Voditel::findOne(['id' => $id]);
+                return $this->render('view_driver', compact('model'));
+            }
+    }
+
+    public function actionChangeDriver()
+    {
+        if (Yii::$app->user->can('admin')) {
+            if ($id = Yii::$app->request->get('id')) {
+                $model = Voditel::findOne(['id' => $id]);
+                if ($model->validate()) {
+                    if (Voditel::updateAll(
+                        [
+                            'voditel_name' => 'ВВВ',
+                            'voditel_nomer_auto' => 'sdfdsf',
+                            'voditel_phone' => 'phone'
+                        ],
+                        ['id' => 35]
+                    )) {
+                        Yii::$app->session->setFlash('change_driver', 'Данные изменены', true);
+                        return $this->refresh();
+                    };
+                }
+            }
+        }
+    }
 }

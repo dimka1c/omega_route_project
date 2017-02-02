@@ -71,9 +71,9 @@ $this->registerJs($script, yii\web\View::POS_END);
     <div class="row">
         <div class="col-md-2">
 
-            <div class="list-group">
-                <a href="/web/admin/admin" class="list-group-item">Список водителей</a>
-                <a href="/web/driver/add-driver" class="list-group-item">Добавить водителя</a>
+            <div class="list-group font-menu-admin">
+                <a href="/admin/admin" class="list-group-item">Список водителей</a>
+                <a href="/driver/add-driver" class="list-group-item">Добавить водителя</a>
                 <a href="#" class="list-group-item">Пользователи</a>
             </div>
 
@@ -105,7 +105,7 @@ $this->registerJs($script, yii\web\View::POS_END);
                                 'format' => 'html',
                                 'label' => 'Водитель',
                                 'value' => function ($model, $key, $index, $column) {
-                                    return Html::a(Html::encode($model->voditel_name), ['view-driver', 'id' => $model->id]);
+                                    return Html::a(Html::encode($model->voditel_name), ['driver/view-driver', 'id' => $model->id]);
                                 }
                             ],
                             [

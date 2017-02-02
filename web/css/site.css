@@ -126,3 +126,7 @@ a.desc:after {
     margin-top: 50px;
     color: #aa0000;
 }
+
+.font-menu-admin {
+    font-size: 12px;
+}
