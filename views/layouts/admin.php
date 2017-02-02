@@ -28,7 +28,7 @@ AppAsset::register($this);
             <?= Html::a('Почта', ['admin/mail'], ['class' => 'btn btn-default active', 'role' => 'button']) ?>
             <?= Html::a('Создание общего МЛ', ['admin/createml'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a('Маршруты', ['admin/route'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
-            <?= Html::a('Пробеги', ['admin/runs'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
+            <?= Html::a('Пробеги', ['driver/runs'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a('Администрирование', ['admin/admin'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a(Yii::$app->user->identity->name_user . ' ( выход ) ', ['main/logout'], ['class' => 'btn btn-default pull-right', 'role' => 'button']) ?>
         </div>

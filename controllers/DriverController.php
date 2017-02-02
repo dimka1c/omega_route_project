@@ -103,7 +103,8 @@ class DriverController extends Controller
                     }
                 }
                 $model = Voditel::findOne(['id' => $id]);
-                return $this->render('view_driver', compact('model'));
+                $data_driver = CreateML::find(['driver' => $id])->asArray()->where(['data_ml' => '2017-01-23'])->count();
+                return $this->render('view_driver', compact('model', 'data_driver'));
             }
     }
 
@@ -126,6 +127,14 @@ class DriverController extends Controller
                     };
                 }
             }
+        }
+    }
+
+    public function actionRuns()
+    {
+        if (Yii::$app->user->can('admin')) {
+            $this->layout = 'admin';
+            echo 'пробеги водителей';
         }
     }
 }

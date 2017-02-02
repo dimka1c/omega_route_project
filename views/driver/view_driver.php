@@ -28,7 +28,7 @@ use yii\helpers\Html;
 
             <div class="container">
                 <div class="row">
-                    <div class="btn-group col-md-offset-2">
+                    <div class="btn-group col-md-offset-1">
                         <button type="button" class="btn btn-default">Пробеги водителя</button>
                         <button type="button" class="btn btn-default">Маршруты водителя</button>
                         <button type="button" class="btn btn-default">
@@ -69,7 +69,32 @@ use yii\helpers\Html;
 
                 </div>
 
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <?php var_dump($data_driver) ?>
+                            <div class="container" id="tek_month">
+                                <div class="row col-md-6" style="background-color: #f2f2f2">
+                                    <p>Отработано дней за этот месяц: <b>19</b></p>
+                                    <p>Пробег за текущий месяц: <b>7287 км</b></p>
+                                    <p>В текущем месяце досталено груза: <b>12.082 т</b></p>
+                                    <p>В текущем месяце доставлено клиентов: <b>276</b></p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="container" id="old_month">
+                                <p>Отработано дней в феврале <b>22</b></p>
+                                <p>За февраль 2017г пробег: <b>7287 км</b></p>
+                                <p>Доставлено груза: <b>12.082 т</b></p>
+                                <p>Количество обслуженных клиентов: <b>276</b></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </div>
+
 
 
         </div>
