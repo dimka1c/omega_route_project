@@ -22,7 +22,12 @@ if ( Yii::$app->session->get('createml_157') === true) {
 <div class="container-fluid default-top">
 
     <div class="row" id="error">
-
+        <?php if(Yii::$app->session->getFlash('no_mail')): ?>
+            <div class="alert alert-success alert-dismissable col-md-6 col-md-offset-1">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong></strong> В данный момент почтовый ящик пуст
+            </div>
+        <?php endif; ?>
     </div>
 
 <?php
@@ -40,16 +45,16 @@ if (!empty($mail)): ?>
 
 
     <?php
-    foreach ($mail as $key=>$val): ?>
+    foreach ($msg_status as $key=>$val): ?>
         <tr>
             <td><?= $val['uid'] ?></td>
             <td><?= $val['email']?></td>
             <td><?= $val['subj']?></td>
-            <td><?= Html::button($msg_status['msg'], ['class' => $msg_status['button_class'], 'disabled' => $msg_status['disabled'],
+            <td><?= Html::button($val['msg'], ['class' => $val['button_class'], 'disabled' => $val['disabled'],
                     'id' => 'mail_'.$val['uid'], 'onclick' => 'createML('.$val['uid'].'); return false']) ?></td>
             <td width="80px"><?= Html::img('@web/images/work.gif', ['class' => 'img-responsive', 'width
                 ' => '50', 'height' => '50', 'style' => $img_visible, 'id' => 'img_'.$val['uid']]) ?></td>
-            <td id="process" width="200px"></td>
+            <td id="process_<?= $val['uid'] ?>"  width="200px"></td>
         </tr>
     <?php endforeach ?>
 

@@ -43,22 +43,44 @@ class AdminController extends Controller
             $model_email = new Email();
             $msg = $model_email->receiveEmail($host);
             $ml = new CreateML();
-            $status = $ml->getScriptStatus($msg[1]['uid']);
-            if (!empty($status)) {
-                if ($status['status_ml'] == 'process') { // в процессе выполнения
-                    $msg_status['msg'] = 'выполняется ' . $status['autor'];
-                    $msg_status['button_class'] = 'btn btn-xs btn-danger';
-                    $msg_status['disabled'] = true;
-                } elseif ($status['status_ml'] == 'create') { // уже сформирован ранее
-                    $msg_status['msg'] = 'сформирован ' . $status['autor'];
-                    $msg_status['button_class'] = 'btn btn-xs btn-primary';
-                    $msg_status['disabled'] = true;
-                } else {
-                    $msg_status['msg'] = 'обработать';
-                    $msg_status['button_class'] = 'btn btn-xs btn-success';
-                    $msg_status['disabled'] = false;
+
+            if (empty($msg)) {
+                Yii::$app->session->setFlash('no_mail', 'Почтовый ящик пуст', true);
+                return $this->render('mail');
+            }
+
+            foreach ($msg as $val) {
+                $status = $ml->getScriptStatus($val['uid']);
+                if (!empty($status)) {
+                    $msg_status[$val['uid']]['uid'] = $val['uid'];
+                    $msg_status[$val['uid']]['email'] = $val['email'];
+                    $msg_status[$val['uid']]['subj'] = $val['subj'];
+                    if ($status['status_ml'] == 'process') { // в процессе выполнения
+                        $msg_status[$val['uid']]['msg'] = 'выполняется ' . $status['autor'];
+                        $msg_status[$val['uid']]['button_class'] = 'btn btn-xs btn-danger';
+                        $msg_status[$val['uid']]['disabled'] = true;
+                    } elseif ($status['status_ml'] == 'create') { // уже сформирован ранее
+                        $msg_status[$val['uid']]['msg'] = 'сформирован ' . $status['autor'];
+                        $msg_status[$val['uid']]['button_class'] = 'btn btn-xs btn-primary';
+                        $msg_status[$val['uid']]['disabled'] = true;
+                    } else {
+                        $msg_status[$val['uid']]['msg'] = 'обработать';
+                        $msg_status[$val['uid']]['button_class'] = 'btn btn-xs btn-success';
+                        $msg_status[$val['uid']]['disabled'] = false;
+                    }
+                } else { //нет в базе логов этого письма
+                    // заносим письмо в базу логов log_ml
+                    if ($status = $ml->setScriptStatus($val['uid'])) {
+                        $msg_status[$val['uid']]['uid'] = $val['uid'];
+                        $msg_status[$val['uid']]['email'] = $val['email'];
+                        $msg_status[$val['uid']]['subj'] = $val['subj'];
+                        $msg_status[$val['uid']]['msg'] = 'обработать';
+                        $msg_status[$val['uid']]['button_class'] = 'btn btn-xs btn-success';
+                        $msg_status[$val['uid']]['disabled'] = false;
+                    }
                 }
             }
+
             return $this->render('mail', ['mail' => $msg, 'msg_status' => $msg_status]);
 
         } else {
@@ -94,7 +116,7 @@ class AdminController extends Controller
                 } else {
                     // заносим в таблицу log_ml данные о том,
                     // что скрипт выполняется на данный момент
-                    $status = $runScriptMail->setScriptStatus($uid);
+                    $status = $runScriptMail->setScriptStatus($uid, 'process');
                     $status = 0;
                     if (!$status) {
                         //Yii::$app->session->setFlash('error_status_log', 'Ошибка базы данных', true );
@@ -110,7 +132,7 @@ class AdminController extends Controller
                  *  для того, чтобы предотвратить многоразовую обработку
                  *  письма с данным uid
                  */
-                $scriptExecute = $runScriptMail->setScriptStatus($uid);
+                $scriptExecute = $runScriptMail->setScriptStatus($uid, 'process');
 
                 session_start();
                 $_SESSION['process'] = 'получение почты';

@@ -41,12 +41,12 @@ class CreateML extends ActiveRecord
      *  данные о том, что письмо с
      *  данным uid на данный момент обрабатывается
      */
-    public function setScriptStatus($uid)
+    public function setScriptStatus($uid, $process = '')
     {
             return Yii::$app->db->createCommand()->insert('log_ml', [
                             'id_ml' => $uid,
                             'data_ml' => date('Y-M-D'),
-                            'status_ml' => 'process',
+                            'status_ml' => $process,
                             'autor_ml' => Yii::$app->user->id
                     ])->execute();
 
