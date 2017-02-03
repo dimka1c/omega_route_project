@@ -104,7 +104,8 @@ class DriverController extends Controller
                 }
                 $model = Voditel::findOne(['id' => $id]);
                 $data_driver = CreateML::find(['driver' => $id])->asArray()->where(['data_ml' => '2017-01-23'])->count();
-                return $this->render('view_driver', compact('model', 'data_driver'));
+                $day = CreateML::find(['driver' => $id])->groupBy('data_ml')->asArray()->count();
+                return $this->render('view_driver', compact('model', 'data_driver', 'day'));
             }
     }
 

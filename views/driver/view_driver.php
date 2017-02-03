@@ -33,7 +33,7 @@ use yii\helpers\Html;
                         <button type="button" class="btn btn-default">Маршруты водителя</button>
                         <button type="button" class="btn btn-default">
                             Рабочие дни &nbsp;
-                            <span class="badge">42 </span>
+                            <span class="badge"><?= $day ?> </span>
                         </button>
                     </div>
 
@@ -72,7 +72,7 @@ use yii\helpers\Html;
                 <div class="container">
                     <div class="row">
                         <div class="col-md-6">
-                            <?php var_dump($data_driver) ?>
+                            <?php var_dump($day) ?>
                             <div class="container" id="tek_month">
                                 <div class="row col-md-6" style="background-color: #f2f2f2">
                                     <p>Отработано дней за этот месяц: <b>19</b></p>

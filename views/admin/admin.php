@@ -12,7 +12,7 @@ $script = <<< JS
     function ChangeStatus(id) {
 
         $.ajax({
-            url: '/web/driver/change-status',
+            url: '/driver/change-status',
             type: 'POST',
             cache: false,
             data: 'id='+id,
@@ -21,13 +21,13 @@ $script = <<< JS
                 $('#driver_status_'+id).html(data);
             },
             beforeSend: function (id) {
-                console.log('перед отправкой на сервер ' + id);
+                //console.log('перед отправкой на сервер ' + id);
             },
             complete: function() {
-                console.log('запрос завершен');
+                //console.log('запрос завершен');
             },
             error: function (data) {
-                console.log('произошла ошибка в запросе');
+                //console.log('произошла ошибка в запросе');
             },
     
         });
@@ -37,7 +37,7 @@ $script = <<< JS
     function RemoveDriver(id) {
         
         $.ajax({
-            url: '/web/driver/delete-driver',
+            url: '/driver/delete-driver',
             type: 'POST',
             cache: false,
             data: 'id='+id,
@@ -79,6 +79,9 @@ $this->registerJs($script, yii\web\View::POS_END);
 
         </div>
         <div class="col-md-9">
+
+            <?php Pjax::begin() ?>
+
             <?php
 
                 $dataProvider = new \yii\data\ActiveDataProvider([
@@ -183,6 +186,9 @@ $this->registerJs($script, yii\web\View::POS_END);
                         ],
                     ]);
             ?>
+
+            <?php Pjax::end() ?>
+
         </div>
     </div>
 
