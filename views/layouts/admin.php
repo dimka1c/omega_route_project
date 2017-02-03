@@ -26,7 +26,7 @@ AppAsset::register($this);
         </div>
         <div class="clearfix">
             <?= Html::a('Почта', ['admin/mail'], ['class' => 'btn btn-default active', 'role' => 'button']) ?>
-            <?= Html::a('Создание общего МЛ', ['admin/createml'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
+            <?= Html::a('Табель рабочего времени', ['admin/tabel'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a('Маршруты', ['admin/route'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a('Пробеги', ['driver/runs'], ['class' => 'btn btn-default', 'role' => 'button']) ?>
             <?= Html::a('Администрирование', ['admin/admin'], ['class' => 'btn btn-default', 'role' => 'button']) ?>

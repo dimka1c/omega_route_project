@@ -10,6 +10,7 @@ namespace app\models;
 
 
 use yii\db\ActiveRecord;
+use Yii;
 
 class CreateML extends ActiveRecord
 {
@@ -33,6 +34,44 @@ class CreateML extends ActiveRecord
             [['on_driver', 'from_driver', 'driver'], 'integer'],
             [['type', 'flight'], 'trim'],
         ];
+    }
+
+
+    /** записываем в таблицу log_ml
+     *  данные о том, что письмо с
+     *  данным uid на данный момент обрабатывается
+     */
+    public function setScriptStatus($uid)
+    {
+            return Yii::$app->db->createCommand()->insert('log_ml', [
+                            'id_ml' => $uid,
+                            'data_ml' => date('Y-M-D'),
+                            'status_ml' => 'process',
+                            'autor_ml' => Yii::$app->user->id
+                    ])->execute();
+
+    }
+
+
+    public function getScriptStatus($uid)
+    {
+        $status = Yii::$app->db->createCommand('
+                    SELECT 
+                        ml.id,
+                        ml.id_ml,
+                        ml.data_ml,
+                        ml.status_ml,
+                        ml.error_code,
+                        users.name_user as autor
+                    FROM 
+                        log_ml as ml
+                    INNER JOIN users ON users.id = autor_ml
+                    WHERE id_ml=:id
+                ')
+            ->bindValue(':id', $uid)
+            ->queryOne();
+
+        return $status;
     }
 
 }

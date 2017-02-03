@@ -42,8 +42,24 @@ class AdminController extends Controller
 
             $model_email = new Email();
             $msg = $model_email->receiveEmail($host);
-
-            return $this->render('mail', ['mail' => $msg]);
+            $ml = new CreateML();
+            $status = $ml->getScriptStatus($msg[1]['uid']);
+            if (!empty($status)) {
+                if ($status['status_ml'] == 'process') { // в процессе выполнения
+                    $msg_status['msg'] = 'выполняется ' . $status['autor'];
+                    $msg_status['button_class'] = 'btn btn-xs btn-danger';
+                    $msg_status['disabled'] = true;
+                } elseif ($status['status_ml'] == 'create') { // уже сформирован ранее
+                    $msg_status['msg'] = 'сформирован ' . $status['autor'];
+                    $msg_status['button_class'] = 'btn btn-xs btn-primary';
+                    $msg_status['disabled'] = true;
+                } else {
+                    $msg_status['msg'] = 'обработать';
+                    $msg_status['button_class'] = 'btn btn-xs btn-success';
+                    $msg_status['disabled'] = false;
+                }
+            }
+            return $this->render('mail', ['mail' => $msg, 'msg_status' => $msg_status]);
 
         } else {
             return $this->redirect(Yii::$app->user->loginUrl);
@@ -56,7 +72,7 @@ class AdminController extends Controller
     {
         if($this->getAccess()) {
             session_start();
-            $_SESSION['process'] = 'начало раборты';
+            $_SESSION['process'] = 'начало работы';
             session_write_close();
             // сначала очищаем папки от файлов
             $path_attach = Yii::getAlias('@attach');
@@ -69,12 +85,32 @@ class AdminController extends Controller
 
             if (Yii::$app->request->post('uid')) {
                 $uid = Yii::$app->request->post('uid');
-                Yii::$app->db->createCommand()->insert('log_ml', [
-                    'id_ml' => Yii::$app->request->post('uid'),
-                    'data_ml' => date('Y-M-D'),
-                    'status_ml' => 'process',
-                    'autor_ml' => Yii::$app->user->id
-                ])->execute();
+                $runScriptMail = new CreateML();
+                // проверяем на сервере, надо ли еще раз обрабатывать данное письмо
+                $status = $runScriptMail->getScriptStatus($uid);
+                if (($status['status_ml'] == 'process') || ($status['status_ml'] == 'create')) {
+                    // обрабатывать не надо, письмо уже обработано
+                    return $this->redirect();
+                } else {
+                    // заносим в таблицу log_ml данные о том,
+                    // что скрипт выполняется на данный момент
+                    $status = $runScriptMail->setScriptStatus($uid);
+                    $status = 0;
+                    if (!$status) {
+                        //Yii::$app->session->setFlash('error_status_log', 'Ошибка базы данных', true );
+                        // т.к. обрабатываем akax,
+                        // то просто передаем текст-ошибку для вывода сообщения
+                        return 'error';
+                    }
+                }
+
+                /** @var  $scriptExecute - true or false
+                 *  записываем в БД данные о том, что
+                 *  письмо с uid уже обрабатывается
+                 *  для того, чтобы предотвратить многоразовую обработку
+                 *  письма с данным uid
+                 */
+                $scriptExecute = $runScriptMail->setScriptStatus($uid);
 
                 session_start();
                 $_SESSION['process'] = 'получение почты';
